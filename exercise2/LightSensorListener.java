@@ -56,6 +56,7 @@ public class LightSensorListener implements SensorPortListener {
 		if (!side) {
 			aNewValue = aNewValue + 40;
 		}
+		
 		if (aNewValue > THRESHOLD) {
 			adjusting = true;
 			demo.adjustPosition(side);
