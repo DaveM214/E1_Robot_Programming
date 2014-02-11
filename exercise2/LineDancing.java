@@ -22,7 +22,7 @@ public class LineDancing {
 	protected LightSensorListener rightListener;
 	protected CastorBotLineFollow robot;
 	protected final static int ROTATION_CONSTANT = 15;
-	private final static int TRAVELMM = 30;
+	protected final static int TRAVELMM = 30;
 
 	/**
 	 * Takes in a CastorBotLineFollow which is a CastorBot with two light

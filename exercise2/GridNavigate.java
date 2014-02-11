@@ -21,7 +21,7 @@ import lejos.nxt.SensorPort;
  */
 public class GridNavigate extends LineDancing {
 
-	//Constants for inputting direction more easily
+	// Constants for inputting direction more easily
 	private static final int UP = 0;
 	private static final int RIGHT = 1;
 	private static final int DOWN = 2;
@@ -57,22 +57,17 @@ public class GridNavigate extends LineDancing {
 	 *            is TRUE, FALSE is LEFT
 	 */
 	public void adjustPosition(boolean side) {
-		if (side) {// If the right sensor has been called (too far to the left)
-			if (!leftListener.adjusting()) {// If the left one is not adjusting
-											// then we only need to correct
-											// course
+
+		if (leftListener.adjusting() && rightListener.adjusting()) {
+			System.out.println("junction!");
+			junctionReached();
+		} 
+		
+		else {
+			if (side) {// If right hand side
 				robot.getPilot().rotate(-ROTATION_CONSTANT);
-			} else {// Otherwise both of them have been called
-				junctionReached();
-			}
-		}
-		if (!side) {
-			if (!rightListener.adjusting()) {
+			} else {// If left hand side
 				robot.getPilot().rotate(ROTATION_CONSTANT);
-			} else {// Otherwise both of them are called - do nothing to avoid
-					// doubling the movement
-				// junctionReached();
-				// BUG maybe??
 			}
 		}
 
@@ -87,18 +82,16 @@ public class GridNavigate extends LineDancing {
 	public void run() {
 		robot.getRight().setFloodlight(true);
 		robot.getLeft().setFloodlight(true);
-		robot.getPilot().setTravelSpeed(robot.getPilot().getMaxTravelSpeed());
+		robot.getPilot().setTravelSpeed(10);
 
-		while (true) {
-			while (!junctionReached) {
-				while (!(leftListener.adjusting() || rightListener.adjusting())) {
-					robot.getPilot().travel(10, true);
-					Thread.yield();
-				}
+		while(true)
+		{
+			while(!(leftListener.adjusting() || rightListener.adjusting()))
+			{
+				robot.getPilot().travel(TRAVELMM);
 				Thread.yield();
 			}
 		}
-
 	}
 
 	/**
@@ -135,6 +128,18 @@ public class GridNavigate extends LineDancing {
 		junctionReached = false;
 
 	}
+	
+	public void addDirections(int i)
+	{
+		if(i > 3)
+		{
+			return;//If invalid number do nothing
+		}
+		else
+		{
+			directions.add(i);
+		}
+	}
 
 	/**
 	 * Main method, called on execution in order to run the program via the run
@@ -149,7 +154,7 @@ public class GridNavigate extends LineDancing {
 				SensorPort.S4, SensorPort.S2);
 		Button.waitForAnyPress();
 		GridNavigate demo = new GridNavigate(robot, true);
-		demo.run();
+		demo.addDirections(LEFT);
 	}
 
 }
